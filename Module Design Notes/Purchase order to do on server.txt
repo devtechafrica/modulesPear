@@ -1,0 +1,39 @@
+copy across 
+
+variance not recalculating after update of invoice value
+load proposed order getting invalid use of null
+Validations on order if it must be a numeric field so text can't be typed in
+
+frmPurchOrder - done latest 21.01.2021
+
+Postings Module  - done latest 21.01.2021
+
+Need to figure out PO report - why no current record
+
+Process to convert a proposal to a confirmed order
+
+1;"Amend an Existing Purchase Order";2;"New Purchase Order";3;"Amend an Proposed Order";4;"New Proposed Order"
+
+form to change the order status
+a form to add in the most basic stock info
+
+link in order requests
+allow a third FOC item
+allow changes to confirmed orders that are not yet closed
+
+change code in exit discount only on full set
+If ordertypeID = 3 Then Exit Sub
+If ordertypeID = 1 Then Exit Sub
+
+reports to do
+	- listing for proposed order
+	- precosting and price check for proposed order
+
+SELECT tblPurchOrderProposedLines.intPurchOrderLineID, tblPurchOrderProposedLines.intStockCodes_ID, tblStockItemsBasic.strStockCode, tblStockItemsBasic.strDescription, tblStockItemsBasic.intWeight, [intWeight]*[intPOStkQty] AS TotalWeight, tblStocksVolume.intCBMTotal AS VOL, [intCBMTotal]*[intPOStkQty] AS TotalVol, tblPurchOrderProposedLines.intPOStkQty, tblPurchOrderProposedLines.intPOStkPrice, tblPurchOrderProposedLines.intPOStkLinesDisc, Round(IIf(IsNull([intPOStkLinesDisc]),[intPOStkPrice],[intPOStkPrice]-([intPOStkPrice]*[intPOStkLinesDisc])),2) AS PriceAfterDis, Round([intPOStkQty]*[PriceAfterDis],2) AS LineTotal, Round([LineTotal]/[intROECosting],2) AS USDLineAfterDis, IIf([ysnBVRequired]=True,[USDLineAfterDis],0) AS BVLineValue, IIf(IsNull([strNotesProposedOrder]),"No Notes",[strNotesProposedOrder]) AS Notes, tblTariffTables.ysnBVRequired, tblPurchOrderProposedHeaders.intROECosting
+FROM tblTariffTables INNER JOIN ((tblPurchOrderProposedHeaders INNER JOIN (tblStockItemsBasic INNER JOIN tblPurchOrderProposedLines ON tblStockItemsBasic.ID_StockCodes = tblPurchOrderProposedLines.intStockCodes_ID) ON tblPurchOrderProposedHeaders.ID_ProposedOrder = tblPurchOrderProposedLines.intPOHeadID) LEFT JOIN tblStocksVolume ON tblStockItemsBasic.ID_StockCodes = tblStocksVolume.intStockCodeID) ON tblTariffTables.ID_Tariffs = tblStockItemsBasic.intTariffs_ID
+ORDER BY tblPurchOrderProposedLines.intPurchOrderLineID;
+
+FROM tblTariffTables INNER JOIN ((tblPurchOrderProposedHeaders INNER JOIN (tblStockItemsBasic INNER JOIN tblPurchOrderProposedLines ON tblStockItemsBasic.ID_StockCodes = tblPurchOrderProposedLines.intStockCodes_ID) ON tblPurchOrderProposedHeaders.ID_ProposedOrder = tblPurchOrderProposedLines.intPOHeadID) LEFT JOIN tblStocksVolume ON tblStockItemsBasic.ID_StockCodes = tblStocksVolume.intStockCodeID) ON tblTariffTables.ID_Tariffs = tblStockItemsBasic.intTariffs_ID
+ORDER BY tblPurchOrderProposedLines.intPurchOrderLineID;
+
+

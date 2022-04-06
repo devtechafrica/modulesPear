@@ -1,0 +1,25 @@
+Private Sub getStockCostFIFO()
+
+strSql = "SELECT tblStockTransactionsLinesMaster.intStockCode_ID, tblStockTransactionsLinesMaster.intStore_ID, tblStockTransactionsLinesMaster.intUnitCostLanded, tblStockTransactionsLinesMaster.intStockBalance, tblStockTransactionsLinesMaster.ID_StockTransLine, tblStockTransactionsLinesMaster.intStkTransHeader_ID, tblStockTransactionsHeadersMaster.dtmStkTransDate " _
+    & " FROM tblStockTransactionsHeadersMaster INNER JOIN tblStockTransactionsLinesMaster ON tblStockTransactionsHeadersMaster.ID_StkTransHead = tblStockTransactionsLinesMaster.intStkTransHeader_ID " _
+    & "WHERE clng(intStockCode_ID)='" & Me.cboStockCodeReplace.Column(0) & "' AND clng(intStore_ID)='" & 3 & "' AND clng(intStockBalance)<>'" & 0 & "' " _
+    & "ORDER BY tblStockTransactionsHeadersMaster.dtmStkTransDate;"
+        Set db = CurrentDb
+        Set rsDAO = db.OpenRecordset(strSql)
+                
+            If rsDAO.recordCount = 0 Then
+                If IsNull(Me.txtCostReplace) Or Me.txtCostReplace = "" Then
+                    stockCost = 0
+                    fifoCalculated = 0
+
+                Else
+                    stockCost = Me.txtCostReplace
+                    fifoCalculated = 0
+                End If
+            Else
+                stockCost = rsDAO!intUnitCostLanded
+                Me.txtCostReplace = stockCost
+            End If
+        
+        rsDAO.Close
+        Set rsDAO = Nothing

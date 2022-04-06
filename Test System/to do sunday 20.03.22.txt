@@ -1,0 +1,46 @@
+
+do allocations for 
+ABS5066 - need to balance as quantities not matching
+ABS5061 - need to balance as quantities not matching
+30064 - needs splits to be completed first
+
+need to complete system for stock make up
+00048
+00259
+00328
+00820
+
+FIFO Module
+'''' here we need to have the original inv line id
+                            adjustCostOnSalesLineTable
+
+Fix new stock items putting in a blank code for Marce
+
+New a new price date for LRC
+
+Price changes - why do we need a partial - for the pastel file only if we have recorded the dates for the 3 price list variations ZWL USD LRC
+with the customer update only change date if it is on the notify table so have a sql and if no records then don't change date - but we need to have the ZWL,USD and LRC dates in there too
+
+put in an order by date
+Public Function trfImportLinesToPriceChecks()
+
+Set db = CurrentDb
+
+strSQL = "SELECT tblInvLinesImport.invlineImp_ID, tblInvLinesImport.intCustomer_ID, tblInvLinesImport.strCustomerName, tblInvLinesImport.dtmInvoiceDate, " _
+        & " tblInvLinesImport.strCustAccCode, tblInvLinesImport.intInvHeaders_ID, tblInvLinesImport.intStockCodes_ID, tblInvLinesImport.strCurrency, " _
+        & " tblInvLinesImport.strStockItem, tblInvLinesImport.intStoreCode_ID, tblInvLinesImport.strSalesRep, tblInvLinesImport.strStore, tblInvLinesImport.intQuantity, tblInvLinesImport.intUnitCost, tblInvLinesImport.intUnitSaleVal, tblInvLinesImport.intSelling, tblInvLinesImport.intRate, tblInvLinesImport.intPriceStructureID, tblInvLinesImport.strDocNumber, tblInvLinesImport.intPriceType_ID, tblInvLinesImport.intPastelGroup_ID, tblCurrencies.ID, tblInvoicesHeaders.intDocType_ID, tblInvSalesID.intStaffID, tblInvLinesImport.intPriceChk, tblInvLinesImport.intLineDiscount, tblInvLinesImport.intSpecialsGroupDiscount, tblStockItemsBasic.strStkPastelGrp, tblInvLinesImport.ysnTrfToPriceChecks, tblStockTransactionsHeadersMaster.ID_StkTransHead, tblInvLinesImport.strTempPriceCheck " _
+        & " FROM tblStockTransactionsHeadersMaster RIGHT JOIN (tblStockItemsBasic RIGHT JOIN (tblInvSalesID RIGHT JOIN ((tblCurrencies RIGHT JOIN tblInvLinesImport ON tblCurrencies.strCurrency = tblInvLinesImport.strCurrency) LEFT JOIN tblInvoicesHeaders ON tblInvLinesImport.strDocNumber = tblInvoicesHeaders.strDocNumber) ON tblInvSalesID.strCode = tblInvLinesImport.strSalesRep) ON tblStockItemsBasic.ID_StockCodes = tblInvLinesImport.intStockCodes_ID) ON tblStockTransactionsHeadersMaster.strStkTransNumber = tblInvoicesHeaders.strDocNumber " _
+        & " WHERE (((tblInvLinesImport.ysnTrfToPriceChecks)=False));"
+
+
+link with other tables to get rid of the dlokups
+Public Sub getUnitSalePrice()
+
+
+Set db = CurrentDb
+
+strSQL = "SELECT invlineImp_ID,intPriceStructureID,intStockCodes_ID,strCurrency,intUnitSaleUSDEq,intStoreCode_ID,intPastelGroup_ID,intCustomer_ID,ysnPriceCheckDone, intInvLine_ID, intPriceVariance, intLineDiscount " _
+        & " FROM tblInvLinesImportPriceCalcs " _
+        & " WHERE cbool(ysnPriceCheckDone)='" & 0 & "';"
+
+make invline notes fields for import tables bigger

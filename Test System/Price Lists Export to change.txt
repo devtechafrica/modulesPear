@@ -1,0 +1,5 @@
+Powerspeed new fileds to program in 
+Supplier Cash Discount
+Supplier Cash Price
+
+need a excel file for this and a way of updating the sale and discount
